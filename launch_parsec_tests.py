@@ -5,7 +5,8 @@ from uuid import UUID
 from gem5art.artifact import Artifact
 from gem5art.run import gem5Run
 from gem5art.tasks.tasks import run_gem5_instance
-from itertools import starmap 
+from itertools import starmap
+from itertools import product
 
 packer = Artifact.registerArtifact(
     command = '''wget https://releases.hashicorp.com/packer/1.4.3/packer_1.4.3_linux_amd64.zip;
