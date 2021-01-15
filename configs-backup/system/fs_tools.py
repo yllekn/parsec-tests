@@ -25,6 +25,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# Authors: Jason Lowe-Power
 
 from m5.objects import IdeDisk, CowDiskImage, RawDiskImage
 
@@ -32,7 +33,7 @@ class CowDisk(IdeDisk):
 
     def __init__(self, filename):
         super(CowDisk, self).__init__()
-        self.driveID = 'device0'
+        self.driveID = 'master'
         self.image = CowDiskImage(child=RawDiskImage(read_only=True),
                                   read_only=False)
         self.image.child.image_file = filename

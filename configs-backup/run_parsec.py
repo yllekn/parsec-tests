@@ -24,13 +24,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# Authors: Jason Lowe-Power, Mahyar Samani
 
 """ Script to run PARSEC benchmarks with gem5.
     The script expects kernel, diskimage, cpu (kvm or timing),
     benchmark, benchmark size, and number of cpu cores as arguments.
     This script is best used if your disk-image has workloads tha have
-    ROI annotations compliant with m5 utility. You can use the script in
-    ../disk-images/parsec/ with the parsec-benchmark repo at
+    ROI annotations compliant with m5 utility. You can use the script in 
+    ../disk-images/parsec/ with the parsec-benchmark repo at 
     https://github.com/darchr/parsec-benchmark.git to create a working
     disk-image for this script.
 """
@@ -54,11 +55,10 @@ def writeBenchScript(dir, bench, size):
     at bootup).
     """
     file_name = '{}/run_{}'.format(dir, bench)
-    bench_file = open(file_name, 'w+')
+    bench_file = open(file_name,"w+")
     bench_file.write('cd /home/gem5/parsec-benchmark\n')
     bench_file.write('source env.sh\n')
-    bench_file.write('parsecmgmt -a run -p \
-            {} -c gcc-hooks -i {}\n'.format(bench, size))
+    bench_file.write('parsecmgmt -a run -p {} -c gcc-hooks -i {}\n'.format(bench, size))
 
     # sleeping for sometime makes sure
     # that the benchmark's output has been
@@ -104,7 +104,7 @@ if __name__ == "__m5_main__":
 
     print("Running the simulation")
     print("Using cpu: {}".format(cpu))
-
+    
     start_tick = m5.curTick()
     end_tick = m5.curTick()
     start_insts = system.totalInsts()
@@ -121,8 +121,8 @@ if __name__ == "__m5_main__":
         m5.stats.reset()
         start_tick = m5.curTick()
         start_insts = system.totalInsts()
-        # switching to timing cpu if argument cpu == timing
-        if cpu == 'simple':
+        # switching to timing cpu if argument cpu == atomic
+        if cpu == 'timing':
             system.switchCpus(system.cpu, system.timingCpu)
     else:
         print("Unexpected termination of simulation!")
@@ -142,7 +142,7 @@ if __name__ == "__m5_main__":
 
     # Simulate the ROI
     exit_event = m5.simulate()
-
+    
     # Reached the end of ROI
     # Finish executing the benchmark with kvm cpu
     if exit_event.getCause() == "workend":
@@ -154,8 +154,8 @@ if __name__ == "__m5_main__":
         end_tick = m5.curTick()
         end_insts = system.totalInsts()
         m5.stats.reset()
-        # switching to timing cpu if argument cpu == timing
-        if cpu == 'simple':
+        # switching to atomic cpu if argument cpu == atomic
+        if cpu == 'timing':
             system.switchCpus(system.timingCpu, system.cpu)
     else:
         print("Unexpected termination of simulation!")
@@ -172,7 +172,7 @@ if __name__ == "__m5_main__":
         print("Total wallclock time: %.2fs, %.2f min" % \
                     (time.time()-globalStart, (time.time()-globalStart)/60))
         exit()
-
+    
     # Simulate the remaning part of the benchmark
     exit_event = m5.simulate()
 

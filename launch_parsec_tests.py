@@ -130,7 +130,7 @@ if __name__ == "__main__":
             cpu, bench, size, cores,
             timeout = 24*60*60 #3 hours
             )
-    timing_runs = starmap(createRun, product(benchmarks, ['simsmall'], ['timing'], num_cpus))
+    timing_runs = starmap(createRun, product(benchmarks, ['simsmall'], ['simple'], num_cpus))
     kvm_runs = starmap(createRun, product(benchmarks, sizes, ['kvm'], num_cpus))
     runs = list(timing_runs) + list(kvm_runs)
     run_job_pool(list(runs), num_parallel_jobs = 39)

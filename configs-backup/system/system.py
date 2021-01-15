@@ -1,10 +1,11 @@
 import m5
 from m5.objects import *
 from m5.util import convert
-from .fs_tools import *
-from .caches import *
+from fs_tools import *
+from caches import *
 
 class MySystem(System):
+
 
     def __init__(self, kernel, disk, cpu_type, num_cpus):
         super(MySystem, self).__init__()
@@ -77,32 +78,28 @@ class MySystem(System):
                         for i in range(num_cpus)]
         self.kvm_vm = KvmVM()
         self.mem_mode = 'atomic_noncaching'
-        for cpu in self.cpu:
-            cpu.createThreads()
-        # if cpu_type == "atomic":
-        #     self.timingCpu = [AtomicSimpleCPU(cpu_id = i,
-        #                                 switched_out = True)
-        #                       for i in range(num_cpus)]
-        #     map(lambda c: c.createThreads(), self.timingCpu)
-        # elif cpu_type == "o3":
-        #     self.timingCpu = [DerivO3CPU(cpu_id = i,
-        #                                 switched_out = True)
-        #                 for i in range(num_cpus)]
-        #     map(lambda c: c.createThreads(), self.timingCpu)
-        # elif cpu_type == "simple":
-        self.timingCpu = [TimingSimpleCPU(cpu_id = i,
-                                    switched_out = True)
+        if cpu_type == "atomic":
+            self.timingCpu = [AtomicSimpleCPU(cpu_id = i,
+                                        switched_out = True)
+                              for i in range(num_cpus)]
+            map(lambda c: c.createThreads(), self.timingCpu)
+        elif cpu_type == "o3":
+            self.timingCpu = [DerivO3CPU(cpu_id = i,
+                                        switched_out = True)
                         for i in range(num_cpus)]
-        for cpu in self.timingCpu:
-            cpu.createThreads()
-        # elif cpu_type == "kvm":
-        #     pass
-        # else:
-        #     m5.fatal("No CPU type {}".format(cpu_type))
+            map(lambda c: c.createThreads(), self.timingCpu)
+        elif cpu_type == "simple":
+            self.timingCpu = [TimingSimpleCPU(cpu_id = i,
+                                        switched_out = True)
+                        for i in range(num_cpus)]
+            map(lambda c: c.createThreads(), self.timingCpu)
+        elif cpu_type == "kvm":
+            pass
+        else:
+            m5.fatal("No CPU type {}".format(cpu_type))
 
-        # map(lambda c: c.createThreads(), self.cpu)
-        # for cpu in self
-        # map(lambda c: c.createInterruptController(), self.cpu)
+        map(lambda c: c.createThreads(), self.cpu)
+        map(lambda c: c.createInterruptController(), self.cpu)
 
     def switchCpus(self, old, new):
         assert(new[0].switchedOut())
@@ -171,32 +168,15 @@ class MySystem(System):
 
         ranges = self._getInterleaveRanges(self.mem_ranges[-1], num, 7, 20)
 
-        self.mem_cntrls = [MemCtrl(port = self.membus.master,
-                                   dram = cls(range = ranges[i])) 
-                                   for i in range(num)] + [kernel_controller]
-        # for i in range(num):
-        #     interface = cls()
-        #     interface.range = ranges[i]
-        #     self.mem_cntrls[i].dram = interface
-        #     self.mem_cntrls[i].port = self.membus.master
-        
-        # self.mem_cntrls = self.mem_cntrls + [kernel_controller]
-        # self.mem_cntrls = [
-        #     cls(range = ranges[i],
-        #         port = self.membus.master)
-        #     for i in range(num)
-        # ] + [kernel_controller]
+        self.mem_cntrls = [
+            cls(range = ranges[i],
+                port = self.membus.master)
+            for i in range(num)
+        ] + [kernel_controller]
 
     def _createKernelMemoryController(self, cls):
-        interface = cls()
-        interface.range = self.mem_ranges[0]
-
-        ctrl = MemCtrl()
-        ctrl.dram = interface
-        ctrl.port = self.membus.master
-        return ctrl
-        # return cls(range = self.mem_ranges[0],
-        #            port = self.membus.master)
+        return cls(range = self.mem_ranges[0],
+                   port = self.membus.master)
 
     def _getInterleaveRanges(self, rng, num, intlv_low_bit, xor_low_bit):
         from math import log
