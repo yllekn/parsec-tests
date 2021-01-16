@@ -119,7 +119,7 @@ if __name__ == "__main__":
 
     def createRun(bench, size, cpu, cores):
         return gem5Run.createFSRun(
-            'parsec_tutorial_run',
+            'parsec_tutorial',
             'gem5/build/X86/gem5.opt',
             'configs-parsec-tests/run_parsec.py',
             f'''results/{cpu}/{cores}/{bench}/{size}''',
