@@ -45,7 +45,8 @@ from m5.objects import *
 sys.path.append('gem5/configs/common/') # For the next line...
 import SimpleOpts
 
-from system import *
+#from system import *
+from system.system import MySystem
 
 def writeBenchScript(dir, bench, size):
     """
