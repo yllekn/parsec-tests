@@ -97,6 +97,10 @@ if __name__ == "__m5_main__":
     #needed for long running jobs
     m5.disableAllListeners()
 
+    # run for 100 instructions
+    for c in system.detailed_cpu:
+        c.max_insts_any_thread = 100
+
     # instantiate all of the objects we've created above
     m5.instantiate()
 
