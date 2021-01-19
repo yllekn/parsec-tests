@@ -99,7 +99,7 @@ if __name__ == "__m5_main__":
     m5.disableAllListeners()
 
     # run for 100 instructions
-    for c in system.detailed_cpu:
+    for c in system.timingCpu:
         c.max_insts_any_thread = 100
 
     # instantiate all of the objects we've created above
