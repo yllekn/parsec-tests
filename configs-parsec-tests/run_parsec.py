@@ -96,11 +96,11 @@ if __name__ == "__m5_main__":
         root.sim_quantum = int(1e9) # 1 ms
 
     #needed for long running jobs
-    m5.disableAllListeners()
+    # m5.disableAllListeners()
 
     # run for 100 instructions
     for c in system.timingCpu:
-        c.max_insts_any_thread = 100
+        c.max_insts_any_thread = 10000000
 
     # instantiate all of the objects we've created above
     m5.instantiate()
@@ -115,8 +115,10 @@ if __name__ == "__m5_main__":
     start_insts = system.totalInsts()
     end_insts = system.totalInsts()
     m5.stats.reset()
-
+   
+    print("HIT1")
     exit_event = m5.simulate()
+    print("HIT2")
 
     if exit_event.getCause() == "workbegin":
         # Reached the start of ROI
